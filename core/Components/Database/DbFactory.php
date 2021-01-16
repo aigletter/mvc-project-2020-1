@@ -4,6 +4,7 @@
 namespace Aigletter\Core\Components\Database;
 
 
+use Aigletter\Core\Application;
 use Aigletter\Core\Contracts\ComponentAbstract;
 use Aigletter\Core\Contracts\ComponentFactoryAbstract;
 use Aigletter\Core\Contracts\ComponentInterface;
@@ -17,6 +18,8 @@ class DbFactory extends ComponentFactoryAbstract
             throw new \Exception('Params dsn, user and password are required');
         }
 
-        return new Db($params['dsn'], $params['user'], $params['password']);
+        $logger = Application::getInstance()->get('logger');
+
+        return new Db($params['dsn'], $params['user'], $params['password'], $logger);
     }
 }

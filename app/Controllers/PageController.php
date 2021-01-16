@@ -27,7 +27,7 @@ class PageController
      */
     public function viewAction()
     {
-       Application::getInstance()->get('db')->test();
+       Application::getInstance()->get('storage')->test();
     }
 
     /**

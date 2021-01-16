@@ -8,6 +8,7 @@ use Aigletter\Core\Components\Router\Router;
 use Aigletter\Core\Contracts\BootstrapInterface;
 use Aigletter\Core\Contracts\ContainerInterface;
 use Aigletter\Core\Contracts\RunnableInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * Class Application
@@ -39,6 +40,10 @@ class Application implements BootstrapInterface, ContainerInterface, RunnableInt
      * При создании нового сервиса, экземпляр попадает в этот массив с ключом, который указан в конфиге
      */
     protected $instances = [];
+
+    protected $aliases = [
+        LoggerInterface::class => 'logger',
+    ];
 
     /**
      * Метод для получения экземпляра приложения.
