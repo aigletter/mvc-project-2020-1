@@ -4,7 +4,6 @@
 namespace Aigletter\Core\Components\Logger;
 
 
-use Aigletter\Core\Contracts\ComponentAbstract;
 use Aigletter\Core\Contracts\ComponentFactoryAbstract;
 use Aigletter\Core\Contracts\ComponentInterface;
 
@@ -18,7 +17,7 @@ class LoggerFactory extends ComponentFactoryAbstract
      */
     protected function createConcreteInstance($params = []): ComponentInterface
     {
-        $writer = new FileWriter($_SERVER['DOCUMENT_ROOT'] . '/../storage/logs/log.txt');
+        $writer = new FileWriter($params['logFile']);
         $formatter = new TextFormatter();
         return new Logger($writer, $formatter);
     }

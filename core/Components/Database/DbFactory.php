@@ -14,12 +14,12 @@ class DbFactory extends ComponentFactoryAbstract
 
     protected function createConcreteInstance($params = []): ComponentInterface
     {
-        if (empty($params['dsn']) || empty($params['user']) || empty($params['password'])) {
+        if (empty($params['host']) || empty($params['user']) || empty($params['password']) || empty($params['db'])) {
             throw new \Exception('Params dsn, user and password are required');
         }
 
         $logger = Application::getInstance()->get('logger');
 
-        return new Db($params['dsn'], $params['user'], $params['password'], $logger);
+        return new Db($params['host'], $params['user'], $params['password'], $params['db'], $logger);
     }
 }

@@ -112,7 +112,9 @@ class Application implements BootstrapInterface, ContainerInterface, RunnableInt
             $params = $this->components[$name]['params'] ?? [];
             $instance = $factory->createInstance($params);
 
-            $instance->bootstrap();
+            if ($instance instanceof BootstrapInterface) {
+                $instance->bootstrap();
+            }
 
             // Вновь созданный экземпляр сервиса добавляем в массив instances
             // Из этого массива будет доставаться уже готовый экземпляр при следующих обращениях к севрису
@@ -154,6 +156,8 @@ class Application implements BootstrapInterface, ContainerInterface, RunnableInt
         // Получаем с контейнера севрис router, запускаем роутинг и вызываем функцию, которую вернет роутер
         $router = $this->get('router');
         if ($action = $router->route()) {
+            // TODO Сделать передачу параметров в фунцию действия
+            // $action($id, $name, $params);
             $action();
         }
     }

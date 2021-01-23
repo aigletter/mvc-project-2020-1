@@ -67,9 +67,7 @@ class Router extends ComponentAbstract
 
         // Проверяем есть ли сконфигурирован роут по текущему пути с текущим методом
         if (isset($this->routes[$method][$path])) { // [get]['/page/view']
-            return function () use ($path, $method) {
-                $this->routes[$method][$path]();
-            };
+            return $this->routes[$method][$path];
         }
 
         throw new \Exception('Not found');
