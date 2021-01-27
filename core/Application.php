@@ -161,4 +161,9 @@ class Application implements BootstrapInterface, ContainerInterface, RunnableInt
             $action();
         }
     }
+
+    public function getAppPath()
+    {
+        return $this->config['app_path'];
+    }
 }
