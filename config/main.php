@@ -25,7 +25,8 @@ return [
                 'logFile' => realpath(__DIR__ . '/../storage/logs')  . '/log.txt',
             ],
             'aliases' => [
-                \Aigletter\Core\Components\Logger\Logger::class
+                \Aigletter\Core\Components\Logger\Logger::class,
+                \Psr\Log\LoggerInterface::class,
             ],
         ],
         'db' => [
@@ -48,6 +49,9 @@ return [
         \App\Component\Test::class => [
             'params' => [
                 'name' => 'Ivan'
+            ],
+            'dependencies' => [
+                'logger' => \Psr\Log\LoggerInterface::class,
             ]
         ]
     ],

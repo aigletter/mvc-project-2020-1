@@ -96,7 +96,7 @@ abstract class ContainerAbstract implements BootstrapInterface, ContainerInterfa
                 $params = $this->components[$name]['params'] ?? [];
                 $instance = $factory->createInstance($params);
             }
-            // Здесь используем инжектор (DI контейнер)
+            // Здесь будет использоваться инжектор (DI контейнер)
             else {
                 $instance = $this->makeInstance($name);
             }
@@ -129,33 +129,53 @@ abstract class ContainerAbstract implements BootstrapInterface, ContainerInterfa
         // Получаем из конфига создаваемого сервиса его класс и дополнительные аргументы, которые нужно передать конструктору
         $config = $this->components[$name];
         $class = $config['class'] ?? $name;
-        $arguments = $config['params'] ?? [];
         if (class_exists($class)) {
-            // В массив будем складывать созданные/полученные сервисы (зависимости) данного класса
-            $instances = [];
-            // Через рефлексию получаем класс, конструктор и его параметры
+            // Через рефлексию получаем класс и его конструктор
             $reflectionClass = new \ReflectionClass($class);
             $constructor = $reflectionClass->getConstructor();
-            $params = $constructor->getParameters();
-            // Пробегаемся по всем параметрам, определяем ожидаемые типы и пытаемся их найти
-            foreach ($params as $param) {
-                $name = $param->getName();
-                // Если это не встроенные типы, считаем что это наши пользовательские классы сервисов
-                // Определяем эти классы и достаем/создаем их из контейнера
-                if (!$param->getType()->isBuiltin()) {
-                    $type = $param->getClass()->getName();
-                    $instances[$name] = $this->get($type);
-                }
-                // Если это примитивы, ищем их в массиве из конфига севриса
-                elseif (isset($arguments[$name])) {
-                    $instances[$name] = $arguments[$name];
-                }
-            }
+
+            $dependencies = $config['dependencies'] ?? [];
+            $params = $config['params'] ?? [];
+
+            // Получаем все параметры, нужные конструктору
+            $arguments = $this->resolveDependencies($constructor, $dependencies, $params);
+
+            // Здесь мы уже разрулили все ожидаемые конструктором параметры
+            // Создаем экземпляр класса сервиса и возвращаем его
+            return $reflectionClass->newInstanceArgs($arguments);
         }
 
-        // Здесь мы уже разрулили все ожидаемые конструктором параметры
-        // Создаем экземпляр класса сервиса и возвращаем его
-        return $reflectionClass->newInstanceArgs($instances);
+        throw new \Exception('Can not create instance of service ' . $name);
+    }
+
+    /**
+     * @param \ReflectionFunctionAbstract $method
+     * @param array $dependencies Массив зависимостей
+     * @param array $params Примитивные параметры конструктора
+     * @return array
+     * @throws \Exception
+     */
+    public function resolveDependencies(\ReflectionFunctionAbstract $method, $dependencies = [], $params = [])
+    {
+        // В массив будем складывать созданные/полученные сервисы (зависимости) данного класса
+        $instances = [];
+        // Пробегаемся по всем параметрам, определяем ожидаемые типы и пытаемся их найти
+        foreach ($method->getParameters() as $parameter) {
+            $name = $parameter->getName();
+            // Если это примитивы, ищем их в массиве из конфига севриса
+            if (array_key_exists($name, $params)) {
+                $instances[$name] = $params[$name];
+            }
+            // Если в конфиге сервиса явно указаны имена зависимых сервиса, получаем зависимости по этим именам
+            elseif (isset($dependencies) && array_key_exists($name, $dependencies)) {
+                $instances[$name] = $this->get($dependencies[$name]);
+            }
+            // Если в конфиге явно не указаны зависимости, пытаемся сами их разрешить
+            elseif ($parameter->getType() && !$parameter->getType()->isBuiltin()) {
+                $instances[$name] = $this->get($parameter->getType()->getName());
+            }
+        }
+        return $instances;
     }
 
     protected function getFactory($name)
