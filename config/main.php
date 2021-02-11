@@ -11,16 +11,21 @@ use Aigletter\Core\Components\Router\RouterFactory;
 return [
     // Массив конфигураций сервисов
     'components' => [
+
+        // Фабрики
         'router' => [
             'factory' => RouterFactory::class,
+            'aliases' => [
+                \Aigletter\Core\Components\Router\Router::class
+            ],
         ],
         'logger' => [
-            'aliases' => [
-                \Psr\Log\LoggerInterface::class
-            ],
             'factory' => LoggerFactory::class,
             'params' => [
                 'logFile' => realpath(__DIR__ . '/../storage/logs')  . '/log.txt',
+            ],
+            'aliases' => [
+                \Aigletter\Core\Components\Logger\Logger::class
             ],
         ],
         'db' => [
@@ -30,15 +35,21 @@ return [
                 'user' => 'root',
                 'password' => '1q2w3e',
                 'db' => 'examples'
-            ]
+            ],
+            'aliases' => [
+                \Aigletter\Core\Components\Database\Db::class
+            ],
         ],
-        /*'storage' => [
-            'factory' => AbstractFactory::class,
+
+        // Инжектор
+        'storage' => [
+            'class' => \Aigletter\Core\Components\Storage\Storage::class,
+        ],
+        \App\Component\Test::class => [
             'params' => [
-                'class' => Storage::class,
-                'fileName' => $_SERVER['DOCUMENT_ROOT'] . '/../storage/logs/log2.txt',
+                'name' => 'Ivan'
             ]
-        ]*/
+        ]
     ],
     // ...
     // Здесь могут содержаться другие настройки приложения, кроме сервисов

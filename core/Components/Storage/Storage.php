@@ -4,17 +4,22 @@
 namespace Aigletter\Core\Components\Storage;
 
 
+use Aigletter\Core\Components\Database\Db;
+use Aigletter\Core\Components\Logger\Logger;
+use Aigletter\Core\Components\Router\Router;
 use Aigletter\Core\Contracts\BootstrapInterface;
 use Aigletter\Core\Contracts\ComponentInterface;
-use Psr\Log\LoggerInterface;
 
 class Storage implements ComponentInterface, BootstrapInterface
 {
     protected $fileName;
 
-    public function __construct(string $fileName, LoggerInterface $logger)
+    protected $logger;
+
+    public function __construct(Logger $logger)
     {
-        $this->fileName = $fileName;
+        $this->logger = $logger;
+        //$this->fileName = $fileName;
     }
 
     public function test($test)
@@ -28,6 +33,3 @@ class Storage implements ComponentInterface, BootstrapInterface
         // TODO: Implement bootstrap() method.
     }
 }
-
-$storage = new Storage();
-$storage->test('test',);

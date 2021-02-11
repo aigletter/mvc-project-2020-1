@@ -6,6 +6,7 @@ namespace App\Controllers;
 
 use Aigletter\Core\Application;
 use Aigletter\Core\Components\Database\Db;
+use App\Component\Test;
 
 /**
  * Class PageController
@@ -28,8 +29,12 @@ class PageController
      */
     public function viewAction()
     {
+        $storage = Application::getInstance()->get(Test::class);
+
+        echo 'Here';
+
         /** @var Db $db */
-        $db = Application::getInstance()->get('db');
+        /*$db = Application::getInstance()->get('db');
 
         $builder = $db->getQueryBuilder();
         $builder->table('clients');
@@ -40,7 +45,7 @@ class PageController
         $builder->table('clients');
         $builder->where('age > 30');
         $clients = $builder->all();
-        print_r($clients);
+        print_r($clients);*/
     }
 
     /**
