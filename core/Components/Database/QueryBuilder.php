@@ -232,7 +232,7 @@ class QueryBuilder implements QueryBuilderInterface
         $where = [];
         foreach ($this->where as $value) {
             if (is_array($value)) {
-                $where[] = $value[0] . ' ' . $value[1] . ' ' . $value[2];
+                $where[] = $value[0] . ' ' . $value[1] . "'" . $value[2] . "'";
             } else {
                 $where[] = $value;
             }
